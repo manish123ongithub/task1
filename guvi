@@ -1,0 +1,244 @@
+import os.path
+
+# Function created for username condition
+
+def username(value):
+    list1 = []
+    condition = ['@', '.']
+    for i in value:
+        list1.append(i)
+    if list1[0].isalpha():
+        if condition[0] in list1 and condition[1] in list1:
+            if ' ' not in list1:
+                if list1[(list1.index('@') + 1)] != condition[1]:
+                    for i in range((list1.index('@')), len(list1)):
+                        if condition[1] == list1[i]:
+                            file = open('TEXT.txt', 'r')
+                            for j in file:
+                                if value not in j:
+                                    continue
+                                else:
+                                    return 'Same username already exists, Please give different username'
+
+                            else:
+                                return 'Pass'
+
+                        else:
+                            continue
+                    else:
+                        return '\'.\' is not after \'@\' in the username, please try again'
+                else:
+                    return '\'.\' is not allowed to present after \'@\', please try again'
+            else:
+                return 'space is not allowed in username, please try again'
+        else:
+            return '\'@\' or \'.\' is missing in username, please try again'
+    else:
+        return 'username should not start with alphabet and special characters , please try again'
+        
+        
+# Function created for password condition
+
+def password(p):
+    list2 = []
+    testpassword = 'pass'
+    for i in p:
+        list2.append(i)
+    if 5 < len(list2) < 16:
+    
+        for i in range(0, len(list2)):
+            if list2[i].isdigit():
+                break
+        else:
+            return 'no numeric in password, please try again'
+        for i in range(0, len(list2)):
+            if list2[i].isupper():
+                break
+        else:
+            return 'no upper case letter please try again'
+            
+        for i in range(0, len(list2)):
+            if list2[i].islower():
+                break
+        else:
+            return 'no lowercase letter, please try again'
+
+        for i in range(0, len(list2)):
+            if not list2[i].isalnum():
+                if list2[i] != ' ':
+                    break
+
+        else:
+            return 'no special character, please try again'
+
+        for i in range(0, len(list2)):
+            if list2[i] != ' ':
+                continue
+            else:
+                return 'space not allowed in password, please try again'
+
+    else:
+        return 'password length too short or too long, please try again'
+
+    if testpassword == 'pass':
+        # print('Your password is in correct format')
+        return testpassword
+
+
+# function created to add login details in text file
+def login_details_add_in_db(r, i, b, y):
+    file = open('TEXT.txt', 'r+')
+    file.readlines()
+    file.write(r)
+    file.write(',')
+    file.write(i)
+    file.write(',')
+    file.write(b)
+    file.write(',')
+    file.write(y)
+    file.write('\n')
+    file.close()
+    return 'your registeration completed, please login now'
+    
+    
+# function for login
+def login_details_check(t, y):
+    file = open('TEXT.txt', 'r+')
+    for i in file:
+        temp = i.split(',')
+        if t == temp[0]:
+            temp[-1] = temp[-1].replace('\n','')
+            if y == temp[-1]:
+                return 'pass'
+            else:
+                return 'fail'
+    else:
+        return 'account not existed, please register first'
+        
+        
+# function for security questions:
+
+def acc_rec_ques(h, y, z):
+    file = open('TEXT.txt', 'r')
+    for i in file:
+        list3 = i.split(',')
+        if h == list3[0]:
+            if y == list3[1] and z == list3[2]:
+                return 'Pass'
+
+            else:
+                return 'Your answers for Security questions are Wrong..'
+
+
+# function to get old password during FORGET PASSWORD condition:
+
+def get_old_pw(rithi):
+    file = open('TEXT.txt', 'r')
+    for rithi in file:
+        old = rithi.split(',')
+        if rithi == old[0]:
+            old[-1] = old[-1].replace('\n', '')
+            return old[-1]
+
+
+# function created to add new password during FORGET PASSWORD condition:
+
+def add_new_pw(m, y, z):
+    with open('TEXT.txt', 'r+') as file:
+        total_Datas = file.readlines()
+        count = 0
+        file.seek(0)
+        for i in file:
+            if m in i:
+                r = total_Datas.index(i)
+                count = count + 1
+                break
+        if count == 1:
+            newone = input('enter new password: ')
+            newone_re = input('re-enter new password: ')
+            if newone == newone_re:
+                pwcheck = password(newone)
+                if pwcheck == 'Pass':
+                    total_Datas[r] = (m + ',' + y + ',' + z + ',' + newone + '\n')
+                    file = open('TEXT.txt', 'w+')
+                    file.seek(0)
+                    file.writelines(total_Datas)
+                    file.close()
+                    return 'password successfully updated Login now'
+                else:
+                    return pwcheck
+            else:
+                return 'password mismatching please enter password correctly'
+
+# REGISTRATION & LOGIN SYSTEM USING PYTHON, FILE HANDLING:
+
+
+x = input('WHAT YOU WANT TO DO REGISTER / LOGIN TYPE IT ONLY IN (CAPITAL LETTER FORMAT):')
+
+if os.path.exists('TEXT.txt'):
+    pass
+else:
+    f = open('TEXT.txt', 'x')
+    f.close()
+
+# Step 1: Registration
+if x == 'REGISTER':
+    print('Create USERNAME & PASSWORD..')
+    print('''Format for USERNAME: 
+    1. Create USERNAME with '@' and '.' , but '.' should not be immediate next to '@'.
+    2. USERNAME should not start with special characters''')
+    user = input('Enter USERNAME: ')
+    o1 = username(user)
+    if o1 == 'Pass':
+        print(user, 'is valid..')
+        print('''
+        Format for PASSWORD: 
+        1. PASSWORD length should be >5 and <16..
+        2. PASSWORD should have Min.1 special character,1 digit,1 Uppercase,1 Lowercase characters atleast.....
+        ''')
+        passw = input('Enter PASSWORD: ')
+        o2 = password(passw)
+        if o2 == 'Pass':
+            print(passw, 'is valid..')
+            print('Please answer the below Security Question for SAFE ACCOUNT RECOVERY in future...')
+            acc_rec_1 = input('Enter your First School name (in lowercase): ')
+            acc_rec_2 = input('Enter your Pet name (in lowercase): ')
+            if acc_rec_1.islower() == acc_rec_2.islower():
+                print(login_details_add_in_db(user, acc_rec_1, acc_rec_2, passw))
+            else:
+                print('Security answers not in Lowercase Please Try again')
+        else:
+            print(o2)
+    else:
+        print(o1)
+
+# Step 2: Login
+if x == 'LOGIN':
+    print('Enter your USERNAME & PASSWORD for LOGIN..')
+    user = input('Enter USERNAME: ')
+    passw = input('Enter PASSWORD: ')
+
+    o3 = login_details_check(user, passw)
+    if o3 == 'Pass':
+        print('LOGIN successful!! Project is Success')
+    elif o3 == 'Fail':
+        print('PASSWORD is wrong')
+        pwcheck1 = int(input('Press 1 for FORGET PASSWORD/Press 2 to Re-try LOGIN: '))
+        if pwcheck1 == 1:
+            print('Answer the security questions to access your account')
+            acc_rec_1 = input('Enter your First School name (in lowercase): ')
+            acc_rec_2 = input('Enter your Pet name (in lowercase): ')
+            op = acc_rec_ques(user, acc_rec_1, acc_rec_2)
+            if op == 'Pass':
+                print('GREAT... Now you can access your account..')
+                a = int(input('Press 1 to get OLD PASSWORD / Press 2 to add NEW PASSWORD: '))
+                if a == 1:
+                    print('Your OLD PASSWORD is', get_old_pw(user))
+                if a == 2:
+                    print(add_new_pw(user, acc_rec_1, acc_rec_2))
+            else:
+                print(op)
+        else:
+            print('Please go for LOGIN page..')
+    else:
+        print(o3)
